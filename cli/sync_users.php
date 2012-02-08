@@ -52,11 +52,11 @@ require_once($CFG->dirroot.'/course/lib.php');
 // Ensure errors are well explained
 $CFG->debug = DEBUG_NORMAL;
 
-if (!is_enabled_auth('cas')) {
-    error_log('[AUTH CAS] '.get_string('pluginnotenabled', 'auth_ldap'));
+if (!is_enabled_auth('tuid')) {
+    error_log('[AUTH TUID] '.get_string('pluginnotenabled', 'auth_ldap'));
     die;
 }
 
-$casauth = get_auth_plugin('cas');
+$casauth = get_auth_plugin('tuid');
 $casauth->sync_users(true);
 

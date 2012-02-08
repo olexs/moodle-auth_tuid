@@ -1,17 +1,16 @@
 <?php
 
 /**
- * @author Martin Dougiamas
- * @author Jerome GUTIERREZ
- * @author I�aki Arenaza
+ * @author Olexandr Savchuk
+ * @author Oliver Günther
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
- * @package moodle multiauth
+ * @package moodle auth_tuid
  *
- * Authentication Plugin: CAS Authentication
+ * Authentication Plugin: TU-ID Authentication
  *
- * Authentication using CAS (Central Authentication Server).
+ * Authentication using TU-ID through CAS (Central Authentication Server).
  *
- * 2006-08-28  File created.
+ * 2012-02-08  File created.
  */
 
 if (!defined('MOODLE_INTERNAL')) {
@@ -19,20 +18,20 @@ if (!defined('MOODLE_INTERNAL')) {
 }
 
 require_once($CFG->dirroot.'/auth/ldap/auth.php');
-require_once($CFG->dirroot.'/auth/cas/CAS/CAS.php');
+require_once($CFG->dirroot.'/auth/tuid/CAS/CAS.php');
 
 /**
- * CAS authentication plugin.
+ * TU-ID authentication plugin.
  */
-class auth_plugin_cas extends auth_plugin_ldap {
+class auth_plugin_tuid extends auth_plugin_ldap {
 
     /**
      * Constructor.
      */
-    function auth_plugin_cas() {
-        $this->authtype = 'cas';
-        $this->roleauth = 'auth_cas';
-        $this->errorlogtag = '[AUTH CAS] ';
+    function auth_plugin_tuid() {
+        $this->authtype = 'tuid';
+        $this->roleauth = 'auth_tuid';
+        $this->errorlogtag = '[AUTH TUID] ';
         $this->init_plugin($this->authtype);
     }
 
@@ -84,7 +83,7 @@ class auth_plugin_cas extends auth_plugin_ldap {
         global $SESSION, $OUTPUT, $PAGE;
 
         $site = get_site();
-        $CASform = get_string('CASform', 'auth_cas');
+        $CASform = get_string('CASform', 'auth_tuid');
         $username = optional_param('username', '', PARAM_RAW);
 
         if (!empty($username)) {
@@ -125,12 +124,12 @@ class auth_plugin_cas extends auth_plugin_ldap {
             // test pgtIou parameter for proxy mode (https connection
             // in background from CAS server to the php server)
             if ($authCAS != 'CAS' && !isset($_GET['pgtIou'])) {
-                $PAGE->set_url('/auth/cas/auth.php');
+                $PAGE->set_url('/auth/tuid/auth.php');
                 $PAGE->navbar->add($CASform);
                 $PAGE->set_title("$site->fullname: $CASform");
                 $PAGE->set_heading($site->fullname);
                 echo $OUTPUT->header();
-                include($CFG->dirroot.'/auth/cas/cas_form.html');
+                include($CFG->dirroot.'/auth/tuid/cas_form.html');
                 echo $OUTPUT->footer();
                 exit();
             }
@@ -206,7 +205,7 @@ class auth_plugin_cas extends auth_plugin_ldap {
             }
         }
 
-        include($CFG->dirroot.'/auth/cas/config.html');
+        include($CFG->dirroot.'/auth/tuid/config.html');
     }
 
     /**
@@ -218,7 +217,7 @@ class auth_plugin_cas extends auth_plugin_ldap {
     function validate_form(&$form, &$err) {
         $certificate_path = trim($form->certificate_path);
         if ($form->certificate_check && empty($certificate_path)) {
-            $err['certificate_path'] = get_string('auth_cas_certificate_path_empty', 'auth_cas');
+            $err['certificate_path'] = get_string('auth_cas_certificate_path_empty', 'auth_tuid');
         }
     }
 
@@ -407,21 +406,29 @@ class auth_plugin_cas extends auth_plugin_ldap {
     }
 
     /**
-     * Reads user information from LDAP and returns it as array()
-     *
-     * If no LDAP servers are configured, user information has to be
-     * provided via other methods (CSV file, manually, etc.). Return
-     * an empty array so existing user info is not lost. Otherwise,
-     * calls parent class method to get user info.
+     * Reads user information from CAS and returns it as array()
      *
      * @param string $username username
      * @return mixed array with no magic quotes or false on error
      */
-    function get_userinfo($username) {
-        if (empty($this->config->host_url)) {
+    function get_userinfo($username) {		
+        $casAttributes = phpCAS::getAttributes();
+		if ($username == $casAttributes['username']) {
+			// only return data for the currently logged in user
+			$data = array(
+				'matrnr' 				=> $casAttributes['tudMatrikel'],
+				'firstname' 			=> $casAttributes['givenname'],
+				'lastname' 				=> $casAttributes['surename'],
+				'casGroupMembership'	=> $casAttributes['groupMembership'],
+				'email' 				=> $casAttributes['mail']
+			);
+			return $data;
+		} else
+			return array();
+		/*if (empty($this->config->host_url)) {
             return array();
         }
-        return parent::get_userinfo($username);
+        return parent::get_userinfo($username);*/
     }
 
     /**
@@ -435,7 +442,7 @@ class auth_plugin_cas extends auth_plugin_ldap {
      */
     function sync_users($do_updates=true) {
         if (empty($this->config->host_url)) {
-            error_log('[AUTH CAS] '.get_string('noldapserver', 'auth_cas'));
+            error_log('[AUTH TUID] '.get_string('noldapserver', 'auth_tuid'));
             return;
         }
         parent::sync_users($do_updates);
