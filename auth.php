@@ -412,8 +412,8 @@ class auth_plugin_tuid extends auth_plugin_ldap {
      * @return mixed array with no magic quotes or false on error
      */
     function get_userinfo($username) {		
-		if (!phpCAS::isAuthenticated())
-			return array();
+	//	if (!phpCAS::isAuthenticated())
+	//		return array();
 			
         $casAttributes = phpCAS::getAttributes();
 		if ($username == phpCAS::getUser()) {
