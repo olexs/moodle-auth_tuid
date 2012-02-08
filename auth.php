@@ -155,15 +155,19 @@ class auth_plugin_tuid extends auth_plugin_ldap {
             phpCAS::logoutWithURL($backurl);
         }
     }
+	
+	private static $_CLIENT_INITIALIZED = false;
 
     /**
      * Connect to the CAS (clientcas connection or proxycas connection)
      *
      */
     function connectCAS() {
-        global $PHPCAS_CLIENT;
+        //global $PHPCAS_CLIENT;
 
-        if (!is_object($PHPCAS_CLIENT)) {
+        //if (!is_object($PHPCAS_CLIENT)) {
+		if (!self::$_CLIENT_INITIALIZED) {
+			self::$_CLIENT_INITIALIZED = true;
             // Make sure phpCAS doesn't try to start a new PHP session when connecting to the CAS server.
             if ($this->config->proxycas) {
                 phpCAS::proxy($this->config->casversion, $this->config->hostname, (int) $this->config->port, $this->config->baseuri, false);
@@ -412,8 +416,8 @@ class auth_plugin_tuid extends auth_plugin_ldap {
      * @return mixed array with no magic quotes or false on error
      */
     function get_userinfo($username) {		
-		if (!phpCAS::isAuthenticated())
-			return array();
+		//if (!phpCAS::isAuthenticated())
+		//	return array();
 			
         $casAttributes = phpCAS::getAttributes();
 		if ($username == phpCAS::getUser()) {
