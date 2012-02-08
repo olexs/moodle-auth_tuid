@@ -18,7 +18,7 @@ if (!defined('MOODLE_INTERNAL')) {
 }
 
 require_once($CFG->dirroot.'/auth/ldap/auth.php');
-require_once($CFG->dirroot.'/auth/tuid/CAS/CAS.php');
+require_once($CFG->dirroot.'/auth/cas/CAS/CAS.php');
 
 /**
  * TU-ID authentication plugin.
