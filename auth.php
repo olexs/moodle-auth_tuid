@@ -423,13 +423,13 @@ class auth_plugin_tuid extends auth_plugin_ldap {
 		if ($username == phpCAS::getUser()) {
 			// only return data for the currently logged in user
 			$data = array(
-				//'matrnr' 				=> $casAttributes['tudMatrikel'],
-				'firstname' 			=> $casAttributes['givenname'],
-				'lastname' 				=> $casAttributes['surename'],
-				//'casGroupMembership'	=> $casAttributes['groupMembership'],
+				'matrnr' 				=> $casAttributes['tudMatrikel'],
+				'firstname' 			=> $casAttributes['givenName'],
+				'lastname' 				=> $casAttributes['surname'],
 				'email' 				=> $casAttributes['mail'],
+				//'casGroupMembership'	=> $casAttributes['groupMembership'],
 				// DEBUG!
-				'description'			=> print_r($casAttributes, true)
+				//'description'			=> print_r($casAttributes, true)
 			);
 			return $data;
 		} else
