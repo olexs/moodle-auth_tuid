@@ -1,0 +1,3 @@
+[submodule "CAS"]
+	path = CAS
+	url = https://github.com/oliwr/phpCAS
