@@ -424,8 +424,11 @@ class auth_plugin_tuid extends auth_plugin_ldap {
 				'lastname' 				=> $casAttributes['surname'],
 				'email' 				=> $casAttributes['mail'],
 				
+				// TEST
+				'profile_field_matrnr'	=> $casAttributes['tudMatrikel'],
+				
 				// DEBUG!
-				//'description'			=> print_r($casAttributes, true)
+				'description'			=> print_r($casAttributes, true)
 			);
 			return $data;
 		} else
