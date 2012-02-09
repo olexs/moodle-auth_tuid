@@ -423,22 +423,42 @@ class auth_plugin_tuid extends auth_plugin_ldap {
 		if ($username == phpCAS::getUser()) {
 			// only return data for the currently logged in user
 			$data = array(
-				'matrnr' 				=> $casAttributes['tudMatrikel'],
 				'firstname' 			=> $casAttributes['givenName'],
 				'lastname' 				=> $casAttributes['surname'],
 				'email' 				=> $casAttributes['mail'],
-				//'casGroupMembership'	=> $casAttributes['groupMembership'],
+				
 				// DEBUG!
 				//'description'			=> print_r($casAttributes, true)
 			);
 			return $data;
 		} else
 			return array();
-		/*if (empty($this->config->host_url)) {
-            return array();
-        }
-        return parent::get_userinfo($username);*/
     }
+	
+	/**
+     * Update a local user record from an external source.
+     * This is a lighter version of the one in moodlelib -- won't do
+     * expensive ops such as enrolment.
+     *
+     * @param string $username username
+     * @param boolean $updatekeys true to update the local record with the external LDAP values.
+     */
+	function update_user_record($username, $updatekeys = false) {
+		// let parent implementation do whatever and give us the user ID
+		$user = parent::update_user_record($username, $updatekeys);
+		
+		// get extended parameters from CAS and save them into user record
+		$casAttributes = phpCAS::getAttributes();
+		if ($username == phpCAS::getUser()) {
+			$data = array(
+				'id'					=> $user->id,
+				'matrnr' 				=> $casAttributes['tudMatrikel'],
+				//'casGroupMembership'	=> $casAttributes['groupMembership'],
+			);
+			require_once('../../profile/lib.php');
+			profile_save_data($data);
+		}
+	}
 
     /**
      * Syncronizes users from LDAP server to moodle user table.
