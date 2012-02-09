@@ -18,7 +18,7 @@ if (!defined('MOODLE_INTERNAL')) {
 }
 
 require_once($CFG->dirroot.'/auth/ldap/auth.php');
-require_once($CFG->dirroot.'/auth/cas/CAS/CAS.php');
+require_once($CFG->dirroot.'/auth/tuid/CAS/CAS.php');
 
 /**
  * TU-ID authentication plugin.
@@ -50,7 +50,7 @@ class auth_plugin_tuid extends auth_plugin_ldap {
      */
     function user_login ($username, $password) {
         $this->connectCAS();
-        return phpCAS::isAuthenticated() && (trim(moodle_strtolower(phpCAS::getUser())) == $username);
+        return tud\phpCAS::isAuthenticated() && (trim(moodle_strtolower(tudcas\phpCAS::getUser())) == $username);
     }
 
     /**
@@ -102,8 +102,8 @@ class auth_plugin_tuid extends auth_plugin_ldap {
         // Connection to CAS server
         $this->connectCAS();
 
-        if (phpCAS::checkAuthentication()) {
-            $frm->username = phpCAS::getUser();
+        if (tud\phpCAS::checkAuthentication()) {
+            $frm->username = tud\phpCAS::getUser();
             $frm->password = 'passwdCas';
             return;
         }
@@ -136,9 +136,9 @@ class auth_plugin_tuid extends auth_plugin_ldap {
         }
 
         // Force CAS authentication (if needed).
-        if (!phpCAS::isAuthenticated()) {
-            phpCAS::setLang($this->config->language);
-            phpCAS::forceAuthentication();
+        if (!tud\phpCAS::isAuthenticated()) {
+            tud\phpCAS::setLang($this->config->language);
+            tud\phpCAS::forceAuthentication();
         }
     }
 
@@ -152,7 +152,7 @@ class auth_plugin_tuid extends auth_plugin_ldap {
         if ($this->config->logoutcas) {
             $backurl = $CFG->wwwroot;
             $this->connectCAS();
-            phpCAS::logoutWithURL($backurl);
+            tud\phpCAS::logoutWithURL($backurl);
         }
     }
 	
@@ -163,24 +163,21 @@ class auth_plugin_tuid extends auth_plugin_ldap {
      *
      */
     function connectCAS() {
-        //global $PHPCAS_CLIENT;
-
-        //if (!is_object($PHPCAS_CLIENT)) {
 		if (!self::$_CLIENT_INITIALIZED) {
 			self::$_CLIENT_INITIALIZED = true;
             // Make sure phpCAS doesn't try to start a new PHP session when connecting to the CAS server.
             if ($this->config->proxycas) {
-                phpCAS::proxy($this->config->casversion, $this->config->hostname, (int) $this->config->port, $this->config->baseuri, false);
+                tud\phpCAS::proxy($this->config->casversion, $this->config->hostname, (int) $this->config->port, $this->config->baseuri, false);
             } else {
-                phpCAS::client($this->config->casversion, $this->config->hostname, (int) $this->config->port, $this->config->baseuri, false);
+                tud\phpCAS::client($this->config->casversion, $this->config->hostname, (int) $this->config->port, $this->config->baseuri, false);
             }
         }
 
         if($this->config->certificate_check && $this->config->certificate_path){
-            phpCAS::setCasServerCACert($this->config->certificate_path);
+            tud\phpCAS::setCasServerCACert($this->config->certificate_path);
         }else{
             // Don't try to validate the server SSL credentials
-            phpCAS::setNoCasServerValidation();
+            tud\phpCAS::setNoCasServerValidation();
         }
     }
 
@@ -416,11 +413,11 @@ class auth_plugin_tuid extends auth_plugin_ldap {
      * @return mixed array with no magic quotes or false on error
      */
     function get_userinfo($username) {		
-		//if (!phpCAS::isAuthenticated())
+		//if (!tud\phpCAS::isAuthenticated())
 		//	return array();
 			
-        $casAttributes = phpCAS::getAttributes();
-		if ($username == phpCAS::getUser()) {
+        $casAttributes = tud\phpCAS::getAttributes();
+		if ($username == tud\phpCAS::getUser()) {
 			// only return data for the currently logged in user
 			$data = array(
 				'matrnr' 				=> $casAttributes['tudMatrikel'],
