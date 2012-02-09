@@ -50,7 +50,7 @@ class auth_plugin_tuid extends auth_plugin_ldap {
      */
     function user_login ($username, $password) {
         $this->connectCAS();
-        return tud\phpCAS::isAuthenticated() && (trim(moodle_strtolower(tudcas\phpCAS::getUser())) == $username);
+        return tud\phpCAS::isAuthenticated() && (trim(moodle_strtolower(tud\phpCAS::getUser())) == $username);
     }
 
     /**
