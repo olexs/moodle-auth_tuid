@@ -452,7 +452,7 @@ class auth_plugin_tuid extends auth_plugin_ldap {
 		if ($username == phpCAS::getUser()) {
 			$data = array(
 				'id'					=> $user->id,
-				'matrnr' 				=> $casAttributes['tudMatrikel'],
+				'profile_field_matrnr'	=> $casAttributes['tudMatrikel'],
 				//'casGroupMembership'	=> $casAttributes['groupMembership'],
 			);
 			require_once('../../profile/lib.php');
