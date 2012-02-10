@@ -413,10 +413,7 @@ class auth_plugin_tuid extends auth_plugin_ldap {
      * @return mixed array with no magic quotes or false on error
      */
     function get_userinfo($username) {		
-		//if (!tud\phpCAS::isAuthenticated())
-		//	return array();
-			
-        $casAttributes = tud\phpCAS::getAttributes();
+		$casAttributes = tud\phpCAS::getAttributes();
 		if ($username == tud\phpCAS::getUser()) {
 			// only return data for the currently logged in user
 			$data = array(
@@ -424,11 +421,8 @@ class auth_plugin_tuid extends auth_plugin_ldap {
 				'lastname' 				=> $casAttributes['surname'],
 				'email' 				=> $casAttributes['mail'],
 				
-				// TEST
-				'profile_field_matrnr'	=> $casAttributes['tudMatrikel'],
-				
-				// DEBUG!
-				'description'			=> print_r($casAttributes, true)
+				// DEBUG
+				//'description'			=> print_r($casAttributes, true)
 			);
 			return $data;
 		} else
