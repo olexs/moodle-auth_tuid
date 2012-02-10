@@ -470,7 +470,7 @@ function auth_tuid_eventhandler_usercreate($newuser) {
 			'profile_field_matrnr'	=> $casAttributes['tudMatrikel'],
 			//'casGroupMembership'	=> $casAttributes['groupMembership'],
 		);
-		require_once($CFG->dirroot.'7user/profile/lib.php');
+		require_once($CFG->dirroot.'/user/profile/lib.php');
 		profile_save_data($data);
 	}
 }
