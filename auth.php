@@ -460,6 +460,7 @@ class auth_plugin_tuid extends auth_plugin_ldap {
  * and updates the user record with extended profile fields if so.
  */
 function auth_tuid_eventhandler_usercreate($newuser) {
+	global $CFG;
 	if ($newuser->auth == 'tuid' 
 			&& tud\phpCAS::isAuthenticated() 
 			&& tud\phpCAS::getUser() == $newuser->username) {
@@ -469,7 +470,7 @@ function auth_tuid_eventhandler_usercreate($newuser) {
 			'profile_field_matrnr'	=> $casAttributes['tudMatrikel'],
 			//'casGroupMembership'	=> $casAttributes['groupMembership'],
 		);
-		require_once('../../profile/lib.php');
+		require_once($CFG->dirroot.'/profile/lib.php');
 		profile_save_data($data);
 	}
 }
