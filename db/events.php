@@ -1,4 +1,5 @@
 <?php
+
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -15,18 +16,18 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version details
+ * Meta course enrolment plugin event handler definition.
  *
- * @package    auth
- * @subpackage cas
- * @author     Martin Dougiamas
- * @author     Jerome GUTIERREZ
- * @author     Iñaky Arenaza
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   auth_tuid
+ * @copyright 2012 Olexandr Savchuk
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
-
-$plugin->version   = 2012021000;        // The current plugin version (Date: YYYYMMDDXX)
-$plugin->requires  = 2011112900;        // Requires this Moodle version
-$plugin->component = 'auth_tuid';        // Full name of the plugin (used for diagnostics)
+/* List of handlers */
+$handlers = array (
+    'user_created' => array (
+        'handlerfile'      => '/auth/tuid/auth.php',
+        'handlerfunction'  => 'auth_tuid_eventhandler_usercreate',
+        'schedule'         => 'instant'
+    )
+);

@@ -435,31 +435,6 @@ class auth_plugin_tuid extends auth_plugin_ldap {
 			return array();
     }
 	
-	/**
-     * Update a local user record from an external source.
-     * This is a lighter version of the one in moodlelib -- won't do
-     * expensive ops such as enrolment.
-     *
-     * @param string $username username
-     * @param boolean $updatekeys true to update the local record with the external LDAP values.
-     */
-	function update_user_record($username, $updatekeys = false) {
-		// let parent implementation do whatever and give us the user ID
-		$user = parent::update_user_record($username, $updatekeys);
-		
-		// get extended parameters from CAS and save them into user record
-		$casAttributes = phpCAS::getAttributes();
-		if ($username == phpCAS::getUser()) {
-			$data = array(
-				'id'					=> $user->id,
-				'profile_field_matrnr'	=> $casAttributes['tudMatrikel'],
-				//'casGroupMembership'	=> $casAttributes['groupMembership'],
-			);
-			require_once('../../profile/lib.php');
-			profile_save_data($data);
-		}
-	}
-
     /**
      * Syncronizes users from LDAP server to moodle user table.
      *
@@ -476,4 +451,25 @@ class auth_plugin_tuid extends auth_plugin_ldap {
         }
         parent::sync_users($do_updates);
     }
+}
+
+/**
+ * Moodle Event API handler.
+ *
+ * Listens for user_created events, checks if the creation was done using CAS,
+ * and updates the user record with extended profile fields if so.
+ */
+function auth_tuid_eventhandler_usercreate($newuser) {
+	if ($newuser->auth == 'tuid' 
+			&& tud\phpCAS::isAuthenticated() 
+			&& tud\phpCAS::getUser() == $newuser->username) {
+		$casAttributes = tud\phpCAS::getAttributes();
+		$data = array(
+			'id'					=> $newuser->id,
+			'profile_field_matrnr'	=> $casAttributes['tudMatrikel'],
+			//'casGroupMembership'	=> $casAttributes['groupMembership'],
+		);
+		require_once('../../profile/lib.php');
+		profile_save_data($data);
+	}
 }
