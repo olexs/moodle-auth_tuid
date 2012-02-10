@@ -465,12 +465,10 @@ function auth_tuid_eventhandler_usercreate($newuser) {
 			&& tud\phpCAS::isAuthenticated() 
 			&& tud\phpCAS::getUser() == $newuser->username) {
 		$casAttributes = tud\phpCAS::getAttributes();
-		$data = array(
-			'id'					=> $newuser->id,
-			'profile_field_matrnr'	=> $casAttributes['tudMatrikel'],
-			//'casGroupMembership'	=> $casAttributes['groupMembership'],
-		);
+		
+		$newuser->profile_field_matrnr = $casAttributes['tudMatrikel'],
+		
 		require_once($CFG->dirroot.'/user/profile/lib.php');
-		profile_save_data($data);
+		profile_save_data($newuser);
 	}
 }
