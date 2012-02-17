@@ -1,11 +1,44 @@
 <div class="loginbox clearfix">
 <div class="loginpanel">
-<div>
+
+<style type='text/css'>
+div.loginpanel form {
+	display: block;
+	width: 100%;
+	text-align: center;
+	padding: 1em;
+}
+
+div.loginpanel input[type=submit] {
+	padding: 0.5em;
+}
+
+div.loginpanel p {
+	padding-bottom: 0.3em;
+}
+
+</style>
+<br><br>
+<form action='<?php echo $CFG->wwwroot.'/login/index.php';?>' method='GET'>
+<input type='hidden' name='authCAS' value='CAS' />
+<input type='submit' value='<?php print_string('accesCAS', 'auth_tuid'); ?>'>
+</form>
+
+<br><br><br>
+
+<?php print_string('accesCAS_NOCAS_help', 'auth_tuid'); ?>
+
+<form action='<?php echo $CFG->wwwroot.'/login/index.php';?>' method='GET'>
+<input type='hidden' name='authCAS' value='NOCAS' />
+<input type='submit' value='<?php print_string('accesNOCAS', 'auth_tuid'); ?>'>
+</form>
+
+<!--<div>
 <a href="<?php echo $CFG->wwwroot.'/login/index.php?authCAS=CAS';?>"><?php print_string('accesCAS', 'auth_tuid');?></a>
 </div>
 <br/>
 <div>
 <a href="<?php echo $CFG->wwwroot.'/login/index.php?authCAS=NOCAS';?>"><?php print_string('accesNOCAS', 'auth_tuid');?></a>
-</div>
+</div>-->
 </div>
 </div>

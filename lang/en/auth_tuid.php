@@ -25,6 +25,10 @@
 
 $string['accesCAS'] = 'TU-ID users';
 $string['accesNOCAS'] = 'other users';
+$string['accesCAS_NOCAS_help'] = '<p>Wenn Sie neu im Lernportal Informatik sind, melden Sie sich mit ihrer TU-ID an.</p>
+<p>Wenn Sie das Lernportal Informatik bereits verwendet haben und einen Nutzerzugang haben, können Sie den Zugang nun auf ihre TU-ID umstellen. Melden Sie sich dafür mit ihrer TU-ID an und folgen Sie den Anweisungen, um den alten Zugang umzustellen.</p>
+<hr>
+<p>Alternativ können Sie sich weiter mit dem alten Nutzerzugang anmelden und das Lernportal wie früher nutzen.</p>';
 $string['auth_tuid_auth_user_create'] = 'Create users externally';
 $string['auth_tuid_baseuri'] = 'URI of the server (nothing if no baseUri)<br />For example, if the CAS server responds to host.domaine.fr/CAS/ then<br />cas_baseuri = CAS/';
 $string['auth_tuid_baseuri_key'] = 'Base URI';
@@ -63,3 +67,21 @@ $string['auth_tuid_version'] = 'Version of CAS';
 $string['CASform'] = 'Authentication choice';
 $string['noldapserver'] = 'No LDAP server configured for CAS! Syncing disabled.';
 $string['pluginname'] = 'TU-ID through CAS server (SSO)';
+
+$string['migration_form'] = 'User account migration';
+$string['error_user_exists'] = "A user account with the same username already exists. Please use the migration tool below to use the old account through TU-ID. If the old account does not belong to you, please contact an administrator.";
+$string['error_wrong_data'] = "Username and password combination is not correct. Please provide the correct username and password for the old account.";
+$string['new_account'] = "Neuer Nutzerzugang";
+$string['new_account_text'] = "<p>Falls Sie sich zum ersten Mal im Lernportal Informatik anmelden, und noch keinen Zugang im Lernportal haben, nutzen Sie diese Option.</p>";
+$string['new_account_submit'] = "Ich melde mich zum ersten Mal im Lernportal Informatik an";
+$string['migrate_account'] = "Alten Zugang auf TU-ID umstellen";
+$string['migrate_account_text'] = "<p>Falls Sie bereits einen Zugang im Lernportal besitzen, konnen Sie diesen jetzt auf Anmeldung uber die TU-ID umstellen.</p>
+<p><b>Nach der Umstellung wird nur noch die Anmeldung mit TU-ID moglich sein, die alten Zugangsdaten werden ungultig!</b></p>
+<p>Geben Sie fur die Umstellung hier ihre alten Zugangsdaten ein:</p>";
+$string['migrate_account_username'] = "Anmeldename: ";
+$string['migrate_account_password'] = "Kennwort: ";
+$string['migrate_account_submit'] = 'Meinen Zugang auf TU-ID "{$a}" umstellen';
+$string['cancel_tuid'] = "Anmeldung abbrechen";
+$string['cancel_tuid_text'] = "<p>Um die Anmeldung mit TU-ID abzubrechen und Ihren alten Zugang weiter mit den alten Zugangsdaten zu benutzen, nutzen Sie diese Option.</p>
+<p>Sie konnen sich jederzeit wieder mit TU-ID anmelden und die Umstellung des alten Zugangs durchfuhren.</p>";
+$string['cancel_tuid_submit'] = "Anmeldung mit TU-ID abbrechen";

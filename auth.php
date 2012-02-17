@@ -79,7 +79,7 @@ class auth_plugin_tuid extends auth_plugin_ldap {
      */
     function loginpage_hook() {
         global $frm;
-        global $CFG;
+        global $CFG, $DB;
         global $SESSION, $OUTPUT, $PAGE;
 
         $site = get_site();
@@ -103,9 +103,115 @@ class auth_plugin_tuid extends auth_plugin_ldap {
         $this->connectCAS();
 
         if (tud\phpCAS::checkAuthentication()) {
-            $frm->username = tud\phpCAS::getUser();
-            $frm->password = 'passwdCas';
-            return;
+            // CAS auth successful. Now to handle Moodle internal data
+			$cas_username = tud\phpCAS::getUser();
+						
+			// get user record with tuid auth and this username.
+			if($DB->record_exists('user', array('username' => $cas_username, 'auth' => 'tuid', 'mnethostid'=>$CFG->mnet_localhost_id))) {
+				// record exists: user has already passed the migration screen, return form data for standard login procedure
+				$frm->username = $cas_username;
+				$frm->password = 'passwdCas';
+				return;
+			}
+			
+			// record doesn't exist yet. check for user input from migration screen, if any
+			$input_migrate_old_account = optional_param('migrate_old_account', 0, PARAM_BOOL);
+			$input_old_username = optional_param('old_username', '', PARAM_TEXT);
+			$input_old_password = optional_param('old_password', '', PARAM_TEXT);
+			$input_new_account = optional_param('new_account', 0, PARAM_BOOL);
+			$input_cancel_cas = optional_param('cancel_cas', 0, PARAM_BOOL);
+			
+			// input: username and password for old account
+			if (!empty($input_migrate_old_account) && $input_migrate_old_account == 1) {
+			
+				// try to authenticate old account
+				$authplugin = get_auth_plugin('email');
+				if ($authplugin->user_login($input_old_username, $input_old_password)) {
+					// auth successful: change auth to tuid, change username and data to cas-provided. 
+					$user = $DB->get_record('user', array('username'=>$input_old_username, 'mnethostid'=>$CFG->mnet_localhost_id));
+					$casAttributes = tud\phpCAS::getAttributes();
+		
+					// new auth data
+					$user->username = $cas_username;
+					$user->password = 'not cached';
+					$user->auth = 'tuid';
+					
+					// basic info
+					$user->firstname = $casAttributes['givenName'];
+					$user->lastname = $casAttributes['surname'];
+					
+					$DB->update_record('user', $user);
+					
+					// extended profile fields
+					$user->profile_field_matrnr = $casAttributes['tudMatrikel'];
+					require_once($CFG->dirroot.'/user/profile/lib.php');
+					profile_save_data($user);
+					
+					// return form data for standard login procedure
+					$frm->username = $cas_username;
+					$frm->password = 'passwdCas';
+					return;
+		
+				} else {
+					// auth failed: prepare error message
+					$error_migrate = get_string('error_wrong_data', 'auth_tuid');
+				}
+				
+			// input: continue without migration
+			} else if (!empty($input_new_account) && $input_new_account == 1) {
+				
+				// check for existing user account with same username
+				if($DB->record_exists('user', array('username' => $cas_username, 'mnethostid'=>$CFG->mnet_localhost_id))) {
+					// account exists: prepare error message (can't create CAS account, conflict)
+					$error_new_account = get_string('error_user_exists', 'auth_tuid');
+				} else {
+					// account doesnt exist: let Moodle handle account creation. return form data for standard login procedure
+					$frm->username = $cas_username;
+					$frm->password = 'passwdCas';
+					return;
+				}
+				
+			// input: return to normal login
+			} else if (!empty($input_cancel_cas) && $input_cancel_cas == 1) {
+			
+				// log out from CAS and redirect to normal login form
+				tud\phpCAS::logoutWithRedirectService($CFG->wwwroot.'/login/index.php?authCAS=NOCAS');
+				exit(); // should never be reached, but just in case above does not halt for some reason
+				
+			}
+						
+			// show migration screen and stop PHP execution
+			$migration_title = get_string('migration_form', 'auth_tuid');
+			
+			// check existing users for a probable old account
+			$probable_username = $DB->get_field('user', 'username', array('deleted' => 0, 'username' => $cas_username, 'mnethostid'=>$CFG->mnet_localhost_id));
+			$casAttributes = tud\phpCAS::getAttributes();
+			if (!$probable_username)
+				$probable_username = $DB->get_field('user', 'username', array('deleted' => 0, 'email' => $casAttributes['mail'], 'mnethostid'=>$CFG->mnet_localhost_id), IGNORE_MULTIPLE);
+			if (!$probable_username)
+				$probable_username = $DB->get_field_sql('SELECT u.username FROM {user} u, {user_info_field} uif, {user_info_data} uid WHERE
+														 uid.data = ? AND uid.fieldid = uif.id AND uif.shortname = ? 
+														 AND u.id = uid.userid AND u.mnethostid = ? AND u.deleted <> ?',
+														 array($casAttributes['tudMatrikel'], 'matrnr', $CFG->mnet_localhost_id, 1), IGNORE_MULTIPLE);
+			if (!$probable_username)
+				$probable_username = $DB->get_field('user', 'username', array('deleted' => 0, 
+																			'firstname' => $casAttributes['givenName'], 
+																			'lastname' => $casAttributes['surname'],
+																			'mnethostid'=>$CFG->mnet_localhost_id), IGNORE_MULTIPLE);
+			if (!$probable_username)
+				$probable_username = $DB->get_field('user', 'username', array('deleted' => 0, 
+																			'lastname' => $casAttributes['givenName'], 
+																			'firstname' => $casAttributes['surname'],
+																			'mnethostid'=>$CFG->mnet_localhost_id), IGNORE_MULTIPLE);
+			
+			$PAGE->set_url('/auth/tuid/auth.php');
+			$PAGE->navbar->add($migration_title);
+			$PAGE->set_title("$site->fullname: $migration_title");
+			$PAGE->set_heading($site->fullname);
+			echo $OUTPUT->header();
+			include($CFG->dirroot.'/auth/tuid/migration_form.php');
+			echo $OUTPUT->footer();
+			exit();
         }
 
         if (isset($_GET['loginguest']) && ($_GET['loginguest'] == true)) {
