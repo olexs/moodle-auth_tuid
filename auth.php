@@ -147,6 +147,9 @@ class auth_plugin_tuid extends auth_plugin_ldap {
 					require_once($CFG->dirroot.'/user/profile/lib.php');
 					profile_save_data($user);
 					
+					// log
+					add_to_log(SITEID, 'auth/tuid', 'migrate_success', '', 'Migrated: '.$input_old_username.' -> '.$cas_username, 0, $user->id);
+					
 					// return form data for standard login procedure
 					$frm->username = $cas_username;
 					$frm->password = 'passwdCas';
@@ -155,6 +158,7 @@ class auth_plugin_tuid extends auth_plugin_ldap {
 				} else {
 					// auth failed: prepare error message
 					$error_migrate = get_string('error_wrong_data', 'auth_tuid');
+					add_to_log(SITEID, 'auth/tuid', 'migrate_auth_failure', '', 'Migrating: '.$input_old_username.' -> '.$cas_username);
 				}
 				
 			// input: continue without migration
@@ -164,10 +168,12 @@ class auth_plugin_tuid extends auth_plugin_ldap {
 				if($DB->record_exists('user', array('username' => $cas_username, 'mnethostid'=>$CFG->mnet_localhost_id))) {
 					// account exists: prepare error message (can't create CAS account, conflict)
 					$error_new_account = get_string('error_user_exists', 'auth_tuid');
+					add_to_log(SITEID, 'auth/tuid', 'new_tuid_failure', '', 'TU-ID username conflict: '.$cas_username);					
 				} else {
 					// account doesnt exist: let Moodle handle account creation. return form data for standard login procedure
 					$frm->username = $cas_username;
 					$frm->password = 'passwdCas';
+					add_to_log(SITEID, 'auth/tuid', 'new_tuid', '', 'New TU-ID: '.$cas_username);
 					return;
 				}
 				
