@@ -23,12 +23,14 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['accesCAS'] = 'TU-ID users';
-$string['accesNOCAS'] = 'other users';
-$string['accesCAS_NOCAS_help'] = '<p>Wenn Sie neu im Lernportal Informatik sind, melden Sie sich mit ihrer TU-ID an.</p>
+$string['accesCAS'] = 'Login as a TU-ID user';
+$string['accesNOCAS'] = 'Login without the TU-ID';
+$string['accesCAS_NOCAS_help'] = '<p>Wenn Sie neu im Lernportal Informatik sind und eine TU-ID haben, melden Sie sich direkt mit ihrer TU-ID an. Sie brauchen keinen neuen Zugang anlegen.</p>
 <p>Wenn Sie das Lernportal Informatik bereits verwendet haben und einen Nutzerzugang haben, können Sie den Zugang nun auf ihre TU-ID umstellen. Melden Sie sich dafür mit ihrer TU-ID an und folgen Sie den Anweisungen, um den alten Zugang umzustellen.</p>
 <hr>
-<p>Alternativ können Sie sich weiter mit dem alten Nutzerzugang anmelden und das Lernportal wie früher nutzen.</p>';
+<p>Sie können sich natürlich mit dem vorhandenen Nutzerzugang anmelden und das Lernportal wie gewohnt nutzen.</p>';
+$string['access_register'] = 'Register a new user account without the TU-ID';
+$string['access_register_help'] = '<p>Wenn Sie keine TU-ID besitzen und trotzdem einen Zugang zum Lernportal brauchen, können Sie sich einen neuen Zugang hier anlegen.</p>';
 $string['auth_tuid_auth_user_create'] = 'Create users externally';
 $string['auth_tuid_baseuri'] = 'URI of the server (nothing if no baseUri)<br />For example, if the CAS server responds to host.domaine.fr/CAS/ then<br />cas_baseuri = CAS/';
 $string['auth_tuid_baseuri_key'] = 'Base URI';
