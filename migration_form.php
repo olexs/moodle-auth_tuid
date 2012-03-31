@@ -41,6 +41,7 @@ div.loginpanel table td input {
 <?php if (isset($error_new_account)) echo $OUTPUT->notification($error_new_account, 'notifyproblem'); ?>
 <?php print_string('new_account_text', 'auth_tuid'); ?>
 <form action='<?php echo $CFG->wwwroot.'/login/index.php';?>' method='POST' class='migrateform'>
+<input type='hidden' name='authCAS' value='CAS' />
 <input type='hidden' name='new_account' value='1' />
 <input type='submit' value='<?php print_string('new_account_submit', 'auth_tuid'); ?>'>
 </form>
@@ -52,6 +53,7 @@ div.loginpanel table td input {
 <?php if (isset($error_migrate)) echo $OUTPUT->notification($error_migrate, 'notifyproblem'); ?>
 <?php print_string('migrate_account_text', 'auth_tuid'); ?>
 <form action='<?php echo $CFG->wwwroot.'/login/index.php';?>' method='POST' class='migrateform'>
+<input type='hidden' name='authCAS' value='CAS' />
 <input type='hidden' name='migrate_old_account' value='1' />
 <table>
 <tr><td><?php print_string('migrate_account_username', 'auth_tuid'); ?></td><td><input type="text" size="25" name="old_username" value="<?php echo $probable_username ? $probable_username : ''; ?>" /></td></tr>
@@ -67,6 +69,7 @@ div.loginpanel table td input {
 <?php print_string('new_account_text', 'auth_tuid'); ?>
 <form action='<?php echo $CFG->wwwroot.'/login/index.php';?>' method='POST' class='migrateform'>
 <input type='hidden' name='new_account' value='1' />
+<input type='hidden' name='authCAS' value='CAS' />
 <input type='submit' value='<?php print_string('new_account_submit', 'auth_tuid'); ?>'>
 </form>
 
@@ -77,6 +80,7 @@ div.loginpanel table td input {
 <?php print_string('cancel_tuid_text', 'auth_tuid'); ?>
 <form action='<?php echo $CFG->wwwroot.'/login/index.php';?>' method='POST' class='migrateform'>
 <input type='hidden' name='cancel_cas' value='1' />
+<input type='hidden' name='authCAS' value='CAS' />
 <input type='submit' value='<?php print_string('cancel_tuid_submit', 'auth_tuid'); ?>'>
 </form>
 
