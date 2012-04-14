@@ -87,3 +87,7 @@ $string['cancel_tuid'] = "Anmeldung abbrechen";
 $string['cancel_tuid_text'] = "<p>Um die Anmeldung mit TU-ID abzubrechen und Ihren alten Zugang weiter mit den alten Zugangsdaten zu benutzen, nutzen Sie diese Option.</p>
 <p>Sie konnen sich jederzeit wieder mit TU-ID anmelden und die Umstellung des alten Zugangs durchfuhren.</p>";
 $string['cancel_tuid_submit'] = "Anmeldung mit TU-ID abbrechen";
+$string['logout_cas'] = "<p>You have been successfully logged out from Moodle.</p>
+<p>However, you are still logged in in the SSO. You can either log out from the SSO compeletely or continue to the Moodle start page.</p>";
+$string['button_logout_cas'] = "Log out from SSO";
+$string['button_no_logout_cas'] = "Continue to start page";

@@ -267,13 +267,50 @@ class auth_plugin_tuid extends auth_plugin_ldap {
      */
     function prelogout_hook() {
         global $CFG;
-
+		
+		// check whether user was actually logged in via CAS
+		$this->connectCAS();
+		if (!tud\phpCAS::isAuthenticated())
+			return;
+		
+		// if he was, and CAS logout option is active, logout
         if ($this->config->logoutcas) {
             $backurl = $CFG->wwwroot;
             $this->connectCAS();
             tud\phpCAS::logoutWithURL($backurl);
         }
     }
+
+	function logoutCAS() {
+		$this->connectCAS();
+		tud\phpCAS::logout();
+	}
+
+	/**
+	 * Logout page hook: show notification about CAS logout.
+	 */
+	function logoutpage_hook() {
+		global $CFG, $USER, $PAGE, $OUTPUT, $SITE;
+		
+		if ($USER->auth == 'tuid' && !$this->config->logoutcas) {
+			// actually log user out
+			require_logout();
+			
+			// build CAS logout warning page
+			require_once($CFG->dirroot.'/lib/outputcomponents.php');
+			$PAGE->set_title($SITE->fullname);
+		    $PAGE->set_heading($SITE->fullname);
+		    echo $OUTPUT->header();
+			$button_continue = new single_button(new moodle_url($CFG->wwwroot.'/auth/tuid/logout_cas.php', array('sesskey'=>sesskey())), 
+				get_string('button_logout_cas', 'auth_tuid'), 'post');
+			$button_cancel = new single_button(new moodle_url($CFG->wwwroot.'/'), get_string('button_no_logout_cas', 'auth_tuid'), 'post');	
+		    echo $OUTPUT->confirm(get_string('logout_cas', 'auth_tuid'), $button_continue, $button_cancel);
+		    echo $OUTPUT->footer();
+			
+			// cancel redirect
+			die;
+		}
+	}
 	
 	private static $_CLIENT_INITIALIZED = false;
 

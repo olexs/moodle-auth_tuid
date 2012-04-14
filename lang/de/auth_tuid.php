@@ -87,3 +87,7 @@ $string['cancel_tuid'] = "Anmeldung abbrechen";
 $string['cancel_tuid_text'] = "<p>Um die Anmeldung mit TU-ID abzubrechen und Ihren alten Zugang weiter mit den alten Zugangsdaten zu benutzen, nutzen Sie diese Option.</p>
 <p>Sie können sich jederzeit wieder mit TU-ID anmelden und die Umstellung des alten Zugangs durchführen.</p>";
 $string['cancel_tuid_submit'] = "Anmeldung mit TU-ID abbrechen";
+$string['logout_cas'] = "<p>Sie wurden aus dem Lernportal Informatik ausgeloggt.</p>
+<p>Sie sind immer noch im SSO-Verbund der TU Darmstadt eingeloggt. Sie können sich aus dem SSO-Verbund ausloggen oder zur Startseite zurückkehren.</p>";
+$string['button_logout_cas'] = "Aus dem SSO-Verbund ausloggen";
+$string['button_no_logout_cas'] = "Zur Startseite zurückkehren";
